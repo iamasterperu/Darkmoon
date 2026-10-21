@@ -114,6 +114,7 @@ svg{flex:none}
 .dots i{width:6px;height:6px;border-radius:99px;background:#c9ccd3}.dots i.on{width:20px;background:var(--night)}
 
 /* chips */
+.credit{display:block;text-align:center;margin:26px 0 118px;font-size:.72rem;color:#9498a3;text-decoration:none}.credit b{color:#6f737d}.credit u{text-underline-offset:2px}
 .pdfbtn{width:100%;height:52px;margin-top:14px;border-radius:999px;background:var(--card);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;gap:10px;font-family:var(--f-head);font-weight:700;font-size:.9rem}
 .pdfbtn:disabled{opacity:.6}
 .chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:18px -20px 0;padding:0 20px 2px}
@@ -285,6 +286,7 @@ svg{flex:none}
 
         <div class="sec-h"><h4 id="secT">Populares</h4><span id="secN"></span></div>
         <div class="grid" id="grid"></div>
+        <a class="credit" id="credit" href="#" target="_blank" rel="noopener" hidden>Catálogo creado por <b>IAMASTER</b> · <u>Quiero el mío</u></a>
       </div>
     </section>
 
@@ -351,6 +353,7 @@ svg{flex:none}
   </div></div>
 </div>
 
+<script src="/credit.js"></script>
 <script>
 let WA="51989714214",ST={};
 let P=[];
@@ -511,12 +514,13 @@ $("pdfBtn").onclick=async()=>{
   const b=$("pdfBtn"),t=$("pdfTxt");if(b.disabled)return;b.disabled=true;t.textContent="Preparando tu PDF…";
   try{
     if(!window.buildCatalogPdf)await new Promise((ok,no)=>{const s=document.createElement("script");s.src="/pdf.js";s.onload=ok;s.onerror=no;document.head.appendChild(s)});
-    const blob=await buildCatalogPdf({products:P,categories:CATS_DEF.filter(([k])=>P.some(p=>p.cat===k)),storeName:ST.store_name||"Dark Moon Store",whatsapp:WA,url:location.origin,logoSrc:"/img/logo-white.png"});
+    const blob=await buildCatalogPdf({products:P,categories:CATS_DEF.filter(([k])=>P.some(p=>p.cat===k)),storeName:ST.store_name||"Dark Moon Store",whatsapp:WA,url:location.origin,logoSrc:"/img/logo-white.png",credit:(window.CREDIT&&CREDIT.on)?{name:CREDIT.name,url:CREDIT.link(ST.store_name||"la tienda")}:null});
     const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="Catalogo-"+(ST.store_name||"Dark Moon Store").replace(/[^a-z0-9]+/gi,"-")+".pdf";document.body.appendChild(a);a.click();a.remove();
     setTimeout(()=>URL.revokeObjectURL(url),60000);toast("Catálogo <b>descargado</b>");
   }catch(e){toast("No se pudo crear el PDF. Intenta otra vez.")}
   finally{b.disabled=false;t.textContent="Descargar catálogo en PDF"}
 };
+if(window.CREDIT&&CREDIT.on){const c=$("credit");c.hidden=false;c.querySelector("b").textContent=CREDIT.name;c.onclick=()=>{c.href=CREDIT.link(ST.store_name||"la tienda")}}
 load();
 </script>
 

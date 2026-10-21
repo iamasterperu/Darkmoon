@@ -154,7 +154,19 @@
         pg.text(store + "  |  WhatsApp " + waShow, M, H - 22, 8, { color: MUTED });
         if (wa) pg.link(M, H - 32, 260, 14, "https://wa.me/" + wa);
         pg.text(String(pageNo), W - M, H - 22, 8, { color: MUTED, align: "right" });
+        if (opts.credit) { pg.text("Catalogo creado por " + opts.credit.name, W / 2, H - 22, 7.5, { color: "#9498a3", align: "center" }); pg.link(W / 2 - 80, H - 32, 160, 14, opts.credit.url); }
       }
+    }
+    if (opts.credit) {
+      const ep = new Page(); pages.push(ep);
+      ep.rect(0, 0, W, H, INK); ep.rect(0, 0, W, 8, MOON);
+      ep.text("Quieres un catalogo asi", W / 2, 370, 26, { bold: true, align: "center", color: "#ffffff" });
+      ep.text("para tu negocio?", W / 2, 402, 26, { bold: true, align: "center", color: "#ffffff" });
+      ep.text("Catalogo virtual con panel propio y PDF automatico.", W / 2, 436, 11, { align: "center", color: "#a6a8b0" });
+      ep.rect(W / 2 - 110, 468, 220, 40, MOON);
+      ep.text("Escribeme por WhatsApp", W / 2, 493, 12, { bold: true, align: "center", color: INK });
+      ep.link(W / 2 - 110, 468, 220, 40, opts.credit.url);
+      ep.text("Creado por " + opts.credit.name, W / 2, H - 50, 10, { align: "center", color: "#a6a8b0" });
     }
     return build(pages, images, store + " - Catalogo");
   };
