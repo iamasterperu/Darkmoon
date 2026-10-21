@@ -114,6 +114,8 @@ svg{flex:none}
 .dots i{width:6px;height:6px;border-radius:99px;background:#c9ccd3}.dots i.on{width:20px;background:var(--night)}
 
 /* chips */
+.pdfbtn{width:100%;height:52px;margin-top:14px;border-radius:999px;background:var(--card);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;gap:10px;font-family:var(--f-head);font-weight:700;font-size:.9rem}
+.pdfbtn:disabled{opacity:.6}
 .chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:18px -20px 0;padding:0 20px 2px}
 .chips::-webkit-scrollbar{display:none}
 .chip{flex:none;display:flex;align-items:center;gap:8px;height:44px;padding:0 16px 0 6px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-weight:700;font-size:.86rem}
@@ -277,6 +279,7 @@ svg{flex:none}
         </button>
         
 
+        <button class="pdfbtn" id="pdfBtn" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/></svg><span id="pdfTxt">Descargar catálogo en PDF</span></button>
         <div class="chips" id="cats" role="group" aria-label="Categorías"></div>
         <div class="seg" id="gen" role="group" aria-label="Para"></div>
 
@@ -504,6 +507,16 @@ async function load(){
   $("navWa").href=waLink("Hola "+(ST.store_name||"Dark Moon Store")+", vi su catálogo y quiero hacer una consulta.");
   drawMosaic();drawChips();render();count();
 }
+$("pdfBtn").onclick=async()=>{
+  const b=$("pdfBtn"),t=$("pdfTxt");if(b.disabled)return;b.disabled=true;t.textContent="Preparando tu PDF…";
+  try{
+    if(!window.buildCatalogPdf)await new Promise((ok,no)=>{const s=document.createElement("script");s.src="/pdf.js";s.onload=ok;s.onerror=no;document.head.appendChild(s)});
+    const blob=await buildCatalogPdf({products:P,categories:CATS_DEF.filter(([k])=>P.some(p=>p.cat===k)),storeName:ST.store_name||"Dark Moon Store",whatsapp:WA,url:location.origin,logoSrc:"/img/logo-white.png"});
+    const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="Catalogo-"+(ST.store_name||"Dark Moon Store").replace(/[^a-z0-9]+/gi,"-")+".pdf";document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),60000);toast("Catálogo <b>descargado</b>");
+  }catch(e){toast("No se pudo crear el PDF. Intenta otra vez.")}
+  finally{b.disabled=false;t.textContent="Descargar catálogo en PDF"}
+};
 load();
 </script>
 
