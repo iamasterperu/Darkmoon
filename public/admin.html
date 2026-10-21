@@ -114,6 +114,17 @@ main{padding-block:16px 120px}
 .chips button{min-width:46px;height:40px;padding:0 12px;border-radius:12px;background:var(--card);border:1px solid var(--line);font-family:var(--f-head);font-weight:700;font-size:.85rem}
 .chips button.on{background:var(--night);color:#fff;border-color:var(--night)}
 .hint{color:var(--muted);font-size:.8rem}
+.swatches{display:flex;flex-wrap:wrap;gap:10px}
+.sdot{width:40px;height:40px;border-radius:50%;border:1px solid rgba(12,12,14,.2);position:relative;flex:none}
+.sdot.on::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:2px solid var(--night)}
+.sdot.on::before{content:"✓";position:absolute;inset:0;display:grid;place-items:center;font-weight:800;color:#fff;mix-blend-mode:difference;font-size:1.1rem}
+.mine{display:flex;flex-wrap:wrap;gap:8px}
+.mine span{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 6px 5px 6px;font-weight:700;font-size:.82rem}
+.mine i{width:22px;height:22px;border-radius:50%;border:1px solid rgba(12,12,14,.2);display:block}
+.mine button{width:24px;height:24px;border-radius:50%;background:var(--mist);font-weight:800;line-height:1}
+.addcol{display:grid;grid-template-columns:50px minmax(0,1fr) auto;gap:8px;align-items:center}
+.addcol input[type=color]{width:50px;height:50px;border:1px solid var(--line);border-radius:14px;padding:3px;background:var(--card)}
+.addcol .btn{height:50px;padding:0 16px}
 .line{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
 .line b{display:block}
 .save{position:fixed;z-index:45;left:0;right:0;bottom:0;background:linear-gradient(transparent,var(--mist) 30%);padding-block:20px calc(14px + env(safe-area-inset-bottom,0px))}
@@ -216,6 +227,11 @@ main{padding-block:16px 120px}
     </div>
     <div class="field"><span>Para</span><div class="seg" id="eGen"><button type="button" data-v="H">Hombre</button><button type="button" data-v="M">Mujer</button><button type="button" data-v="U">Unisex</button></div></div>
     <div class="field"><span>Tallas disponibles</span><div class="chips" id="eSizes"></div><input class="in" id="eSizeExtra" placeholder="Otras tallas separadas por coma (ej: 38, 40, Única)"></div>
+    <div class="field"><span>Colores disponibles</span>
+      <div class="swatches" id="eSwatches"></div>
+      <div class="mine" id="eMine"></div>
+      <div class="addcol"><input type="color" id="eColHex" value="#111111" aria-label="Elegir un color"><input class="in" id="eColName" maxlength="24" placeholder="Otro color (ej: Mostaza)"><button class="btn ghost" type="button" id="eColAdd">Agregar</button></div>
+      <span class="hint">Toca un círculo para activar o quitar un color. Si no marcas ninguno, la tienda no muestra colores.</span></div>
     <div class="field"><span>Etiqueta sobre la foto</span><div class="chips" id="eFlag"></div></div>
     <label class="field"><span>Descripción</span><textarea class="in" id="eDesc" maxlength="600" placeholder="Tela, corte, colores disponibles…"></textarea></label>
     <div class="line"><div><b>Visible en la tienda</b><span class="hint">Apágalo si se agotó; no se borra.</span></div><button class="sw" id="eActive" role="switch" aria-checked="true" aria-label="Visible en la tienda"></button></div>
@@ -233,6 +249,7 @@ main{padding-block:16px 120px}
 const $=id=>document.getElementById(id);
 const CATS=[["polos","Polos"],["poleras","Poleras y buzos"],["casacas","Casacas"],["jeans","Jeans y pantalones"],["camisas","Camisas"],["conjuntos","Conjuntos"],["promos","Promos"],["accesorios","Accesorios"]];
 const SIZE_SETS=["XS","S","M","L","XL","XXL","26","28","30","32","34","36","38"];
+const PALETTE=[["Negro","#111111"],["Blanco","#f5f5f5"],["Plomo","#8a8d93"],["Beige","#d8c7a5"],["Crema","#efe6d2"],["Marrón","#5b3a29"],["Celeste","#7cc4f0"],["Azul","#1e3a8a"],["Verde","#1f5c3a"],["Verde oliva","#6b7a3a"],["Rojo","#c0152f"],["Vino","#6d1230"],["Naranja","#e8782a"],["Amarillo","#f2c230"],["Rosado","#f08cae"],["Morado","#6b2d8f"]];
 const FLAGS=["","Nuevo","Promo","Oferta","Últimos"];
 const GEN={H:"Hombre",M:"Mujer",U:"Unisex"};
 let token=null,products=[],settings={},filter="todo",q="",editing=null,draft=null;
@@ -304,11 +321,11 @@ $("q").addEventListener("input",e=>{q=e.target.value.trim();drawList()});
 CATS.forEach(([k,l])=>{const o=document.createElement("option");o.value=k;o.textContent=l;$("eCat").appendChild(o)});
 function openEditor(p){
   editing=p||null;
-  draft=p?{...p}:{name:"",price:"",cat:filter!=="todo"&&filter!=="ocultos"?filter:"polos",gen:"H",sizes:"S,M,L,XL",flag:"",desc:"",img:"",active:1};
+  draft=p?{...p}:{name:"",price:"",cat:filter!=="todo"&&filter!=="ocultos"?filter:"polos",gen:"H",sizes:"S,M,L,XL",colors:"",flag:"",desc:"",img:"",active:1};
   $("eTitle").textContent=p?"Editar producto":"Nuevo producto";
   $("eName").value=draft.name;$("ePrice").value=draft.price;$("eCat").value=draft.cat;
   if(![...$("eCat").options].some(o=>o.value===draft.cat)){const o=document.createElement("option");o.value=draft.cat;o.textContent=draft.cat;$("eCat").appendChild(o);$("eCat").value=draft.cat}
-  $("eDesc").value=draft.desc;setImg(draft.img);drawGen();drawSizes();drawFlags();setSw($("eActive"),draft.active);
+  $("eDesc").value=draft.desc;setImg(draft.img);drawGen();drawSizes();cols=parseCols(draft.colors);drawColors();drawFlags();setSw($("eActive"),draft.active);
   $("eDel").hidden=!p;$("eOrder").hidden=!p;$("eConfirm").hidden=true;
   $("editor").hidden=false;$("editor").scrollTop=0;document.body.style.overflow="hidden";
 }
@@ -326,11 +343,24 @@ function drawSizes(){
     b.onclick=()=>{const s=draft.sizes.split(",").map(x=>x.trim()).filter(Boolean);const i=s.indexOf(z);i<0?s.push(z):s.splice(i,1);s.sort((a,b)=>SIZE_SETS.indexOf(a)-SIZE_SETS.indexOf(b));draft.sizes=s.join(",");drawSizes()};c.appendChild(b)});
   $("eSizeExtra").value=cur.filter(z=>!SIZE_SETS.includes(z)).join(", ");
 }
+const parseCols=s=>(s||"").split(",").map(c=>{const i=c.lastIndexOf(":");return i>0?[c.slice(0,i),c.slice(i+1)]:null}).filter(Boolean);
+let cols=[];
+function drawColors(){
+  const sw=$("eSwatches");sw.innerHTML="";
+  PALETTE.forEach(([n,h])=>{const on=cols.some(c=>c[0]===n);const b=document.createElement("button");b.type="button";b.className="sdot"+(on?" on":"");b.style.background=h;b.title=n;b.setAttribute("aria-label",n+(on?" (activo)":""));
+    b.onclick=()=>{const i=cols.findIndex(c=>c[0]===n);i<0?cols.push([n,h]):cols.splice(i,1);drawColors()};sw.appendChild(b)});
+  const m=$("eMine");m.innerHTML="";
+  cols.forEach(([n,h],i)=>{const s=document.createElement("span");const d=document.createElement("i");d.style.background=h;const t=document.createElement("span");t.style.padding="0";t.style.border="0";t.textContent=n;const x=document.createElement("button");x.type="button";x.textContent="×";x.setAttribute("aria-label","Quitar "+n);x.onclick=()=>{cols.splice(i,1);drawColors()};s.append(d,t,x);m.appendChild(s)});
+}
+$("eColAdd").onclick=()=>{const n=$("eColName").value.replace(/[:,<>"]/g,"").trim();if(!n){toast("Escribe el nombre del color",true);$("eColName").focus();return}
+  if(cols.some(c=>c[0].toLowerCase()===n.toLowerCase())){toast("Ese color ya está",true);return}
+  if(cols.length>=12){toast("Máximo 12 colores",true);return}
+  cols.push([n,$("eColHex").value]);$("eColName").value="";drawColors()};
 function drawFlags(){const c=$("eFlag");c.innerHTML="";FLAGS.forEach(f=>{const b=document.createElement("button");b.type="button";b.textContent=f||"Ninguna";b.className=(draft.flag||"")===f?"on":"";b.onclick=()=>{draft.flag=f;drawFlags()};c.appendChild(b)})}
 $("eSave").onclick=async()=>{
   const extra=$("eSizeExtra").value.split(",").map(s=>s.trim()).filter(Boolean);
   const base=draft.sizes.split(",").map(s=>s.trim()).filter(z=>z&&SIZE_SETS.includes(z));
-  const body={name:$("eName").value.trim(),price:parseFloat($("ePrice").value),cat:$("eCat").value,gen:draft.gen,sizes:[...base,...extra].join(","),flag:draft.flag,desc:$("eDesc").value.trim(),img:draft.img,active:draft.active};
+  const body={name:$("eName").value.trim(),price:parseFloat($("ePrice").value),cat:$("eCat").value,gen:draft.gen,sizes:[...base,...extra].join(","),colors:cols.map(c=>c[0]+":"+c[1]).join(","),flag:draft.flag,desc:$("eDesc").value.trim(),img:draft.img,active:draft.active};
   if(!body.name){toast("Escribe el nombre del producto",true);$("eName").focus();return}
   if(isNaN(body.price)||body.price<0){toast("Escribe el precio",true);$("ePrice").focus();return}
   if(!body.sizes){toast("Elige al menos una talla",true);return}

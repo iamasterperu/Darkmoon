@@ -22,7 +22,8 @@
    "sizes": "S,M,L,XL",
    "active": 1,
    "sort": 0,
-   "flag": ""
+   "flag": "",
+   "colors": "Marrón:#5b3a29,Negro:#111111,Blanco:#f5f5f5,Beige:#d8c7a5"
   },
   {
    "id": "polo-20-1",
@@ -35,7 +36,8 @@
    "sizes": "S,M,L,XL",
    "active": 1,
    "sort": 1,
-   "flag": ""
+   "flag": "",
+   "colors": "Negro:#111111,Blanco:#f5f5f5,Plomo:#8a8d93"
   },
   {
    "id": "polo-manga-cero",
@@ -48,7 +50,8 @@
    "sizes": "S,M,L,XL",
    "active": 1,
    "sort": 2,
-   "flag": ""
+   "flag": "",
+   "colors": "Beige:#d8c7a5,Negro:#111111,Blanco:#f5f5f5"
   },
   {
    "id": "faded-hoodie",
@@ -61,7 +64,8 @@
    "sizes": "S,M,L,XL",
    "active": 1,
    "sort": 3,
-   "flag": ""
+   "flag": "",
+   "colors": "Marrón:#5b3a29,Negro:#111111"
   },
   {
    "id": "polera-zip",
@@ -74,7 +78,8 @@
    "sizes": "S,M,L,XL",
    "active": 1,
    "sort": 4,
-   "flag": ""
+   "flag": "",
+   "colors": "Negro:#111111"
   },
   {
    "id": "casaca-acolchada",
@@ -87,7 +92,8 @@
    "sizes": "S,M,L,XL",
    "active": 1,
    "sort": 5,
-   "flag": ""
+   "flag": "",
+   "colors": "Negro:#111111,Azul:#1e3a8a,Verde oliva:#6b7a3a,Plomo:#8a8d93"
   },
   {
    "id": "casaca-bicolor",
@@ -100,7 +106,8 @@
    "sizes": "S,M,L,XL",
    "active": 1,
    "sort": 6,
-   "flag": ""
+   "flag": "",
+   "colors": "Verde oliva:#6b7a3a,Negro:#111111,Azul:#1e3a8a"
   },
   {
    "id": "casaca-delta",
@@ -113,7 +120,8 @@
    "sizes": "S,M,L,XL",
    "active": 1,
    "sort": 7,
-   "flag": ""
+   "flag": "",
+   "colors": "Verde oliva:#6b7a3a,Negro:#111111,Azul:#1e3a8a,Rojo:#c0152f"
   },
   {
    "id": "casaca-2en1",
@@ -126,7 +134,8 @@
    "sizes": "S,M,L,XL",
    "active": 1,
    "sort": 8,
-   "flag": ""
+   "flag": "",
+   "colors": "Negro:#111111,Plomo:#8a8d93,Azul:#1e3a8a,Rojo:#c0152f"
   },
   {
    "id": "baggy-hombre",
@@ -139,7 +148,8 @@
    "sizes": "28,30,32,34,36",
    "active": 1,
    "sort": 9,
-   "flag": ""
+   "flag": "",
+   "colors": "Celeste:#7cc4f0,Azul:#1e3a8a"
   },
   {
    "id": "jean-clasico",
@@ -152,7 +162,8 @@
    "sizes": "28,30,32,34,36",
    "active": 1,
    "sort": 10,
-   "flag": ""
+   "flag": "",
+   "colors": "Celeste:#7cc4f0,Azul:#1e3a8a"
   },
   {
    "id": "camisa-waffle",
@@ -165,7 +176,8 @@
    "sizes": "S,M,L,XL",
    "active": 1,
    "sort": 11,
-   "flag": ""
+   "flag": "",
+   "colors": "Verde:#1f5c3a,Negro:#111111,Beige:#d8c7a5"
   },
   {
    "id": "camisa-seda",
@@ -178,7 +190,8 @@
    "sizes": "S,M,L,XL",
    "active": 1,
    "sort": 12,
-   "flag": ""
+   "flag": "",
+   "colors": "Blanco:#f5f5f5,Negro:#111111"
   },
   {
    "id": "camisa-lino-camisero",
@@ -191,7 +204,8 @@
    "sizes": "S,M,L,XL",
    "active": 1,
    "sort": 13,
-   "flag": ""
+   "flag": "",
+   "colors": "Beige:#d8c7a5,Negro:#111111,Blanco:#f5f5f5"
   },
   {
    "id": "lino-chino",
@@ -204,7 +218,8 @@
    "sizes": "S,M,L,XL",
    "active": 1,
    "sort": 14,
-   "flag": ""
+   "flag": "",
+   "colors": "Negro:#111111,Blanco:#f5f5f5,Beige:#d8c7a5"
   },
   {
    "id": "buzo-franela",
@@ -217,7 +232,8 @@
    "sizes": "S,M,L,XL",
    "active": 1,
    "sort": 15,
-   "flag": ""
+   "flag": "",
+   "colors": "Negro:#111111,Plomo:#8a8d93"
   },
   {
    "id": "cortaviento-urban",
@@ -230,7 +246,8 @@
    "sizes": "S,M,L,XL",
    "active": 1,
    "sort": 16,
-   "flag": ""
+   "flag": "",
+   "colors": ""
   },
   {
    "id": "cortavientos-deportivo",
@@ -243,7 +260,8 @@
    "sizes": "S,M,L,XL",
    "active": 1,
    "sort": 17,
-   "flag": ""
+   "flag": "",
+   "colors": ""
   },
   {
    "id": "baggy-mujer",
@@ -256,7 +274,8 @@
    "sizes": "28,30,32,34,36",
    "active": 1,
    "sort": 18,
-   "flag": ""
+   "flag": "",
+   "colors": ""
   },
   {
    "id": "cargo-faded",
@@ -269,7 +288,8 @@
    "sizes": "28,30,32,34,36",
    "active": 1,
    "sort": 19,
-   "flag": ""
+   "flag": "",
+   "colors": ""
   },
   {
    "id": "barrel-faded",
@@ -282,7 +302,8 @@
    "sizes": "28,30,32,34,36",
    "active": 1,
    "sort": 20,
-   "flag": ""
+   "flag": "",
+   "colors": ""
   },
   {
    "id": "palazzo-color",
@@ -295,7 +316,8 @@
    "sizes": "28,30,32,34,36",
    "active": 1,
    "sort": 21,
-   "flag": ""
+   "flag": "",
+   "colors": ""
   },
   {
    "id": "palazzo-focalizado",
@@ -308,7 +330,8 @@
    "sizes": "28,30,32,34,36",
    "active": 1,
    "sort": 22,
-   "flag": ""
+   "flag": "",
+   "colors": ""
   },
   {
    "id": "conjunto-chaleco",
@@ -321,7 +344,8 @@
    "sizes": "S,M,L,XL",
    "active": 1,
    "sort": 23,
-   "flag": ""
+   "flag": "",
+   "colors": ""
   },
   {
    "id": "conjunto-formal",
@@ -334,7 +358,8 @@
    "sizes": "S,M,L,XL",
    "active": 1,
    "sort": 24,
-   "flag": ""
+   "flag": "",
+   "colors": ""
   },
   {
    "id": "promo-padre",
@@ -347,7 +372,8 @@
    "sizes": "S,M,L,XL",
    "active": 1,
    "sort": 25,
-   "flag": "Promo"
+   "flag": "Promo",
+   "colors": ""
   }
  ]
 }

@@ -5,7 +5,7 @@ const JSON_HEADERS = { "content-type": "application/json; charset=utf-8", "cache
 const MAX_IMAGE_BYTES = 1_500_000;
 const TOKEN_DAYS = 14;
 const SETTING_KEYS = ["store_name", "whatsapp", "promo_on", "promo_label", "promo_title", "promo_highlight", "promo_image", "promo_product", "promo_end"];
-const PRODUCT_FIELDS = ["name", "cat", "gen", "price", "desc", "img", "sizes", "active", "sort", "flag"];
+const PRODUCT_FIELDS = ["name", "cat", "gen", "price", "desc", "img", "sizes", "colors", "active", "sort", "flag"];
 
 const json = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: JSON_HEADERS });
 const err = (message, status = 400) => json({ error: message }, status);
@@ -52,18 +52,25 @@ async function ensureSchema(env, origin) {
     env.DB.prepare(`CREATE TABLE IF NOT EXISTS products (
       id TEXT PRIMARY KEY, name TEXT NOT NULL, cat TEXT NOT NULL DEFAULT 'polos', gen TEXT NOT NULL DEFAULT 'H',
       price REAL NOT NULL DEFAULT 0, "desc" TEXT NOT NULL DEFAULT '', img TEXT NOT NULL DEFAULT '',
-      sizes TEXT NOT NULL DEFAULT 'S,M,L,XL', active INTEGER NOT NULL DEFAULT 1, sort INTEGER NOT NULL DEFAULT 0,
+      sizes TEXT NOT NULL DEFAULT 'S,M,L,XL', colors TEXT NOT NULL DEFAULT '', active INTEGER NOT NULL DEFAULT 1, sort INTEGER NOT NULL DEFAULT 0,
       flag TEXT NOT NULL DEFAULT '', updated_at TEXT)`),
     env.DB.prepare(`CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL DEFAULT '')`),
     env.DB.prepare(`CREATE TABLE IF NOT EXISTS images (id TEXT PRIMARY KEY, mime TEXT NOT NULL, data BLOB NOT NULL, created_at TEXT)`),
   ]);
+  const cols = (await env.DB.prepare("PRAGMA table_info(products)").all()).results.map((c) => c.name);
+  if (!cols.includes("colors")) {
+    await env.DB.prepare("ALTER TABLE products ADD COLUMN colors TEXT NOT NULL DEFAULT ''").run();
+    const seed = await (await env.ASSETS.fetch(new Request(origin + "/catalog.json"))).json();
+    await env.DB.batch(seed.products.filter((p) => p.colors).map((p) =>
+      env.DB.prepare("UPDATE products SET colors=? WHERE id=? AND colors=''").bind(p.colors, p.id)));
+  }
   const seeded = await env.DB.prepare("SELECT value FROM settings WHERE key='seeded'").first();
   if (!seeded) {
     const res = await env.ASSETS.fetch(new Request(origin + "/catalog.json"));
     const seed = await res.json();
     const stmts = seed.products.map((p) =>
-      env.DB.prepare(`INSERT OR IGNORE INTO products (id,name,cat,gen,price,"desc",img,sizes,active,sort,flag,updated_at)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,datetime('now'))`).bind(p.id, p.name, p.cat, p.gen, p.price, p.desc, p.img, p.sizes, p.active, p.sort, p.flag || "")
+      env.DB.prepare(`INSERT OR IGNORE INTO products (id,name,cat,gen,price,"desc",img,sizes,colors,active,sort,flag,updated_at)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,datetime('now'))`).bind(p.id, p.name, p.cat, p.gen, p.price, p.desc, p.img, p.sizes, p.colors || "", p.active, p.sort, p.flag || "")
     );
     for (const [k, v] of Object.entries(seed.settings)) {
       stmts.push(env.DB.prepare("INSERT OR IGNORE INTO settings (key,value) VALUES (?,?)").bind(k, String(v)));
@@ -133,6 +140,14 @@ function cleanProduct(b) {
   if (p.desc !== undefined) p.desc = String(p.desc).slice(0, 600);
   if (p.img !== undefined) { p.img = String(p.img).slice(0, 300); if (p.img && !/^\/img\//.test(p.img)) throw new Error("Imagen no válida."); }
   if (p.sizes !== undefined) p.sizes = String(p.sizes).split(",").map((s) => s.trim()).filter(Boolean).slice(0, 15).join(",");
+  if (p.colors !== undefined) {
+    p.colors = String(p.colors).split(",").map((c) => {
+      const i = c.lastIndexOf(":");
+      const name = c.slice(0, i).replace(/[:,<>"]/g, "").trim().slice(0, 24);
+      const hex = c.slice(i + 1).trim();
+      return i > 0 && name && /^#[0-9a-fA-F]{6}$/.test(hex) ? name + ":" + hex.toLowerCase() : "";
+    }).filter(Boolean).slice(0, 12).join(",");
+  }
   if (p.active !== undefined) p.active = p.active ? 1 : 0;
   if (p.sort !== undefined) p.sort = Math.trunc(Number(p.sort) || 0);
   if (p.flag !== undefined) p.flag = String(p.flag).slice(0, 20);
@@ -146,9 +161,9 @@ async function saveProduct(request, env, id) {
     let base = slug(p.name), newId = base, n = 2;
     while (await env.DB.prepare("SELECT 1 FROM products WHERE id=?").bind(newId).first()) newId = base + "-" + n++;
     const max = await env.DB.prepare("SELECT COALESCE(MIN(sort),0) AS m FROM products").first();
-    const row = { cat: "polos", gen: "H", price: 0, desc: "", img: "", sizes: "S,M,L,XL", active: 1, sort: (max.m || 0) - 1, flag: "", ...p };
-    await env.DB.prepare(`INSERT INTO products (id,name,cat,gen,price,"desc",img,sizes,active,sort,flag,updated_at)
-      VALUES (?,?,?,?,?,?,?,?,?,?,?,datetime('now'))`).bind(newId, row.name, row.cat, row.gen, row.price, row.desc, row.img, row.sizes, row.active, row.sort, row.flag).run();
+    const row = { cat: "polos", gen: "H", price: 0, desc: "", img: "", sizes: "S,M,L,XL", colors: "", active: 1, sort: (max.m || 0) - 1, flag: "", ...p };
+    await env.DB.prepare(`INSERT INTO products (id,name,cat,gen,price,"desc",img,sizes,colors,active,sort,flag,updated_at)
+      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,datetime('now'))`).bind(newId, row.name, row.cat, row.gen, row.price, row.desc, row.img, row.sizes, row.colors, row.active, row.sort, row.flag).run();
     return json(await env.DB.prepare("SELECT * FROM products WHERE id=?").bind(newId).first(), 201);
   }
   const keys = Object.keys(p);
